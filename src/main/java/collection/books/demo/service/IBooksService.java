@@ -20,4 +20,8 @@ public interface IBooksService {
     List<Collection> findAllCollection();
 
     Collection findCollectionById(Long id);
+
+    Collection addCollection(Collection collection);
+
+    void deleteCollection(Collection collection);
 }

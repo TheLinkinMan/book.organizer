@@ -7,10 +7,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.hateoas.Link;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
 
@@ -55,4 +56,57 @@ public class MainController {
         return ResponseEntity.ok(CollectionModel.of(bookList));
     }
 
+    @PostMapping
+    public ResponseEntity<Book> addBook(@RequestBody Book book) {
+        Book currentBook = booksService.add(book);
+        if (currentBook == null)
+            return ResponseEntity.badRequest().build();
+        Link link = linkTo(methodOn(MainController.class).showById(currentBook.getId())).withSelfRel();
+        return ResponseEntity.created(link.toUri()).build();
+    }
+
+    @PostMapping("collection/")
+    public ResponseEntity<Collection> addCollection(@RequestBody Collection collection) {
+        Collection currentCollection = booksService.addCollection(collection);
+        if (currentCollection == null)
+            return ResponseEntity.badRequest().build();
+        Link link = linkTo(methodOn(MainController.class).showCollection(currentCollection.getId())).withSelfRel();
+        return ResponseEntity.created(link.toUri()).build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Book> updateBook(@RequestBody Book book) {
+        Book currentBook = booksService.findById(book.getId());
+        if (currentBook == null)
+            return ResponseEntity.badRequest().build();
+        booksService.add(book);
+        return ResponseEntity.accepted().build();
+    }
+
+    @PutMapping("collection/")
+    public ResponseEntity<Book> updateCollection(@RequestBody Collection collection) {
+        Collection currentCollection = booksService.findCollectionById(collection.getId());
+        if (currentCollection == null)
+            return ResponseEntity.badRequest().build();
+        booksService.addCollection(collection);
+        return ResponseEntity.accepted().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Object> deleteBook(@RequestBody Book book) {
+        Book currentBook = booksService.findById(book.getId());
+        if (currentBook == null)
+            return ResponseEntity.badRequest().build();
+        booksService.delete(book);
+        return ResponseEntity.accepted().build();
+    }
+
+    @DeleteMapping("collection/")
+    public ResponseEntity<Object> deleteCollection(@RequestBody Collection collection) {
+        Collection currentCollection = booksService.findCollectionById(collection.getId());
+        if (currentCollection == null)
+            return ResponseEntity.badRequest().build();
+        booksService.deleteCollection(collection);
+        return ResponseEntity.accepted().build();
+    }
 }

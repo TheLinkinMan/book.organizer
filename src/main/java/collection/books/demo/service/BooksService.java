@@ -53,4 +53,14 @@ public class BooksService implements IBooksService{
     public Collection findCollectionById(Long id) {
         return repCollection.findById(id).orElse(null);
     }
+
+    @Override
+    public Collection addCollection(Collection collection) {
+        return repCollection.save(collection);
+    }
+
+    @Override
+    public void deleteCollection(Collection collection) {
+        repCollection.delete(collection);
+    }
 }
