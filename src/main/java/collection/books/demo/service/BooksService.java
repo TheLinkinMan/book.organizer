@@ -3,6 +3,7 @@ package collection.books.demo.service;
 import collection.books.demo.domain.Book;
 import collection.books.demo.domain.Collection;
 import collection.books.demo.repository.BooksRepository;
+import collection.books.demo.repository.CollectionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +15,21 @@ public class BooksService implements IBooksService{
 
     private final BooksRepository rep;
 
+    private final CollectionRepository repCollection;
+
     @Override
     public List<Book> findAll() {
         return (List<Book>) rep.findAll();
     }
 
     @Override
-    public Book findByCollection(Collection collection) {
-        return (Book) rep.findAllByCollection(collection);
+    public Book findById(Long id) {
+        return rep.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Book> findByCollection(Collection collection) {
+        return (List<Book>) rep.findAllByCollection(collection);
     }
 
     @Override
@@ -34,5 +42,15 @@ public class BooksService implements IBooksService{
         if (book != null) {
             rep.delete(book);
         }
+    }
+
+    @Override
+    public List<Collection> findAllCollection() {
+        return (List<Collection>) repCollection.findAll();
+    }
+
+    @Override
+    public Collection findCollectionById(Long id) {
+        return repCollection.findById(id).orElse(null);
     }
 }

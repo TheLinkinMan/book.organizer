@@ -9,9 +9,15 @@ public interface IBooksService {
 
     List<Book> findAll();
 
-    Book findByCollection(Collection collection);
+    Book findById(Long id);
+
+    List<Book> findByCollection(Collection collection);
 
     Book add(Book book);
 
     void delete(Book book);
+
+    List<Collection> findAllCollection();
+
+    Collection findCollectionById(Long id);
 }
